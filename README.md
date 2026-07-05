@@ -1,16 +1,73 @@
-# React + Vite
+# Bloon Paradise
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Sitio web de presentación y ventas para **Bloon Paradise**, una tienda de arreglos florales y regalos artesanales ubicada en Madeira, Portugal. La página actúa como catálogo visual interactivo y canal directo de contacto con clientes a través de WhatsApp.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Propósito
 
-## React Compiler
+Bloon Paradise ofrece arreglos elaborados con flores frescas, cajas regalo, bouquets y decoraciones para todo tipo de ocasión especial. El objetivo del sitio es presentar el catálogo de productos de forma atractiva, transmitir la identidad de la marca y reducir la fricción entre el cliente y el pedido, redirigiendo directamente a una conversación de WhatsApp con un mensaje preformateado.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the Oxlint configuration
+## Funcionalidades
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+- **Hero con carrusel de productos** — Presenta los arreglos destacados mediante un slider con transición cruzada automática y efecto tilt 3D al mover el cursor.
+- **Catálogo paginado** — Galería completa de arreglos en formato polaroid con 6 productos por página. Cada tarjeta enlaza directamente a WhatsApp con el nombre del producto incluido en el mensaje.
+- **Sección de categorías** — Agrupa los arreglos por ocasión (cumpleaños, aniversario, navidad, amor y amistad, entre otras). Cada categoría redirige también al canal de WhatsApp.
+- **Cómo funciona** — Explica el proceso de compra en tres pasos simples: elegir el arreglo, escribir por WhatsApp y recibir el pedido.
+- **Footer con contacto directo** — Acceso rápido a Instagram y WhatsApp, junto con un botón de llamada a la acción.
+
+---
+
+## Estructura del proyecto
+
+```
+src/
+├── components/
+│   ├── Navbar.jsx          # Navegación principal
+│   ├── Hero.jsx            # Sección inicial con carrusel y texto de bienvenida
+│   ├── CollageSection.jsx  # Catálogo paginado de arreglos
+│   ├── Categories.jsx      # Tarjetas de categorías por ocasión
+│   ├── HowItWorks.jsx      # Proceso de compra paso a paso
+│   └── Footer.jsx          # Pie de página con redes sociales y CTA
+├── App.jsx                 # Composición principal de la página
+├── index.css               # Variables de diseño y estilos base
+└── main.jsx                # Punto de entrada de React
+```
+
+---
+
+## Stack tecnológico
+
+| Tecnología | Uso |
+|---|---|
+| React 19 | Framework de UI |
+| Vite 8 | Bundler y servidor de desarrollo |
+| Tailwind CSS 4 | Utilidades de estilos |
+| Framer Motion | Animaciones e interacciones |
+
+---
+
+## Instalación y ejecución local
+
+Requisitos previos: Node.js 18 o superior.
+
+```bash
+# Instalar dependencias
+npm install
+
+# Iniciar servidor de desarrollo
+npm run dev
+
+# Generar build de producción
+npm run build
+```
+
+---
+
+## Contacto
+
+- Instagram: [@bloomparadise_26](https://www.instagram.com/bloomparadise_26)
+- WhatsApp: +351 935 882 405
+- Ubicación: Madeira, Portugal
