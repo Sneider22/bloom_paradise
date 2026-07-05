@@ -49,21 +49,6 @@ src/
 
 ---
 
-## Instalación y ejecución local
-
-Requisitos previos: Node.js 18 o superior.
-
-```bash
-# Instalar dependencias
-npm install
-
-# Iniciar servidor de desarrollo
-npm run dev
-
-# Generar build de producción
-npm run build
-```
-
 ---
 
 ## Contacto
