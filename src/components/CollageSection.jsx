@@ -23,7 +23,7 @@ const ARRANGEMENTS = [
 const TOTAL_PAGES = Math.ceil(ARRANGEMENTS.length / PER_PAGE)
 
 function buildHref(name) {
-  const msg = `Hola Bloon Paradise! Me interesa el arreglo "${name}". ¿Pueden darme más información?`
+  const msg = `Hola Bloom Paradise! Me interesa el arreglo "${name}". ¿Pueden darme más información?`
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`
 }
 

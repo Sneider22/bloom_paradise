@@ -34,7 +34,7 @@ function Footer({ whatsappHref }) {
           {/* Redes sociales */}
           <div className="flex items-center gap-3">
             <a
-              href="https://www.instagram.com/phoenix_petals24?igsh=MWVmeXRoNGF0N2dreg=="
+              href="https://www.instagram.com/bloom_paradise27?utm_source=qr"
               target="_blank"
               rel="noreferrer"
               aria-label="Instagram de Bloom Paradise"
