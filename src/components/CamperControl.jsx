@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Search, Plus, Edit2, Trash2, FileText, User, HelpCircle, Check, AlertTriangle, FolderOpen, Download, FileArchive, Loader2, X } from 'lucide-react';
+import { Search, Plus, Edit2, Trash2, FileText, User, HelpCircle, Check, AlertTriangle, FolderOpen, Download, FileArchive, Loader2, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import CamperModal from './CamperModal';
 
 export default function CamperControl({ campers, onAddCamper, onUpdateCamper, onDeleteCamper }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [camperToEdit, setCamperToEdit] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
   
   // Custom confirmation state
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -22,6 +23,55 @@ export default function CamperControl({ campers, onAddCamper, onUpdateCamper, on
       (camper.rateCode && camper.rateCode.toLowerCase().includes(term))
     );
   });
+
+  // Pagination parameters
+  const ITEMS_PER_PAGE = 25;
+  const totalPages = Math.ceil(filteredCampers.length / ITEMS_PER_PAGE);
+  const activePage = Math.min(currentPage, totalPages > 0 ? totalPages : 1);
+  const startIndex = (activePage - 1) * ITEMS_PER_PAGE;
+  const paginatedCampers = filteredCampers.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
+  const getPageNumbers = (current, total) => {
+    const pages = [];
+    const maxVisible = 5;
+    
+    if (total <= maxVisible) {
+      for (let i = 1; i <= total; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      
+      let start = Math.max(2, current - 1);
+      let end = Math.min(total - 1, current + 1);
+      
+      if (current <= 2) {
+        end = 3;
+      }
+      if (current >= total - 1) {
+        start = total - 2;
+      }
+      
+      if (start > 2) {
+        pages.push('...');
+      }
+      
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+      
+      if (end < total - 1) {
+        pages.push('...');
+      }
+      
+      pages.push(total);
+    }
+    return pages;
+  };
 
   const handleEditClick = (camper) => {
     setCamperToEdit(camper);
@@ -94,14 +144,17 @@ export default function CamperControl({ campers, onAddCamper, onUpdateCamper, on
             <input
               type="text"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
               placeholder="Buscar por nombre, código, representante, sesión o tarifa..."
               className="w-full pl-11 pr-4 py-3 bg-slate-50/80 border border-slate-200 rounded-2xl text-slate-800 text-sm placeholder:text-slate-400 focus:bg-white"
             />
           </div>
           
           <div className="text-xs text-slate-500 font-medium">
-            Mostrando <span className="text-camp-green font-bold">{filteredCampers.length}</span> de <span className="text-slate-700 font-bold">{campers.length}</span> campistas registrados
+            Mostrando <span className="text-camp-green font-bold">{filteredCampers.length > 0 ? `${(activePage - 1) * ITEMS_PER_PAGE + 1}-${Math.min(activePage * ITEMS_PER_PAGE, filteredCampers.length)}` : 0}</span> de <span className="text-camp-green font-bold">{filteredCampers.length}</span> campistas {searchTerm && 'encontrados'} ({campers.length} en total)
           </div>
         </div>
 
@@ -127,7 +180,8 @@ export default function CamperControl({ campers, onAddCamper, onUpdateCamper, on
             )}
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <>
+            <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-slate-50/70 border-b border-slate-100 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
@@ -143,7 +197,7 @@ export default function CamperControl({ campers, onAddCamper, onUpdateCamper, on
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
-                {filteredCampers.map((camper) => (
+                {paginatedCampers.map((camper) => (
                   <tr key={camper.id} className="hover:bg-slate-50/50">
                     {/* ID */}
                     <td className="py-4 px-6 font-mono text-xs font-semibold text-slate-800">
@@ -152,12 +206,28 @@ export default function CamperControl({ campers, onAddCamper, onUpdateCamper, on
                     
                     {/* Name & Representative */}
                     <td className="py-4 px-6">
-                      <div>
-                        <p className="font-bold text-slate-800">{camper.name}</p>
-                        <p className="text-[11px] text-slate-400 flex items-center space-x-1 mt-0.5">
-                          <User className="h-3 w-3 inline text-slate-400" />
-                          <span>Representante: {camper.representative}</span>
-                        </p>
+                      <div className="flex items-center gap-3">
+                        {/* Profile Photo */}
+                        <div className="shrink-0">
+                          {camper.profilePhoto ? (
+                            <img
+                              src={camper.profilePhoto}
+                              alt={camper.name}
+                              className="h-9 w-9 rounded-xl object-cover border border-slate-200 shadow-sm"
+                            />
+                          ) : (
+                            <div className="h-9 w-9 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400">
+                              <User className="h-4 w-4" />
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-bold text-slate-800">{camper.name}</p>
+                          <p className="text-[11px] text-slate-400 flex items-center space-x-1 mt-0.5">
+                            <User className="h-3 w-3 inline text-slate-400" />
+                            <span>Representante: {camper.representative}</span>
+                          </p>
+                        </div>
                       </div>
                     </td>
                     
@@ -285,6 +355,59 @@ export default function CamperControl({ campers, onAddCamper, onUpdateCamper, on
               </tbody>
             </table>
           </div>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="text-xs text-slate-500 font-medium">
+                Página <span className="text-slate-800 font-bold">{activePage}</span> de <span className="text-slate-800 font-bold">{totalPages}</span>
+              </div>
+              <div className="flex items-center space-x-1.5">
+                <button
+                  onClick={() => handlePageChange(activePage - 1)}
+                  disabled={activePage === 1}
+                  className="p-2 border border-slate-200 hover:bg-slate-50 text-slate-600 disabled:text-slate-350 disabled:border-slate-100 disabled:hover:bg-transparent rounded-xl cursor-pointer disabled:cursor-not-allowed transition-colors"
+                  title="Página Anterior"
+                >
+                  <ChevronLeft className="h-4.5 w-4.5" />
+                </button>
+                
+                {/* Page numbers */}
+                {getPageNumbers(activePage, totalPages).map((p, idx) => {
+                  if (p === '...') {
+                    return (
+                      <span key={`ell-${idx}`} className="px-3 py-2 text-xs text-slate-400 font-medium">
+                        ...
+                      </span>
+                    );
+                  }
+                  return (
+                    <button
+                      key={p}
+                      onClick={() => handlePageChange(p)}
+                      className={`px-3.5 py-2 text-xs font-bold rounded-xl cursor-pointer transition-all ${
+                        activePage === p
+                          ? 'bg-camp-green text-white shadow-md shadow-camp-green/10'
+                          : 'border border-slate-200 text-slate-600 hover:bg-slate-50'
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  );
+                })}
+
+                <button
+                  onClick={() => handlePageChange(activePage + 1)}
+                  disabled={activePage === totalPages}
+                  className="p-2 border border-slate-200 hover:bg-slate-50 text-slate-600 disabled:text-slate-350 disabled:border-slate-100 disabled:hover:bg-transparent rounded-xl cursor-pointer disabled:cursor-not-allowed transition-colors"
+                  title="Página Siguiente"
+                >
+                  <ChevronRight className="h-4.5 w-4.5" />
+                </button>
+              </div>
+            </div>
+          )}
+          </>
         )}
       </div>
 

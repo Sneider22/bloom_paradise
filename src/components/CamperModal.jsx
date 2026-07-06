@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Upload, FileText, Trash2, Calendar, File, CheckCircle } from 'lucide-react';
+import { X, Upload, FileText, Trash2, Calendar, File, CheckCircle, Camera, UserCircle2 } from 'lucide-react';
 
 const RATE_CODES = [
   { code: 'MW-Summer', desc: 'Medicaid Waiver Summer (7424)', method: 'Seguro', amount: 8.31 },
@@ -20,6 +20,7 @@ const SESSIONS = [
 
 export default function CamperModal({ isOpen, onClose, onSave, camperToEdit, existingCampers }) {
   const fileInputRef = useRef(null);
+  const photoInputRef = useRef(null);
   
   // Form states
   const [id, setId] = useState('');
@@ -32,6 +33,8 @@ export default function CamperModal({ isOpen, onClose, onSave, camperToEdit, exi
   const [insuranceName, setInsuranceName] = useState('');
   const [paymentAmount, setPaymentAmount] = useState('');
   const [files, setFiles] = useState([]);
+  const [profilePhoto, setProfilePhoto] = useState(null); // base64 string
+  const [profilePhotoDrag, setProfilePhotoDrag] = useState(false);
   
   // New Administrative fields
   const [rateCode, setRateCode] = useState('MW-Summer');
@@ -56,6 +59,7 @@ export default function CamperModal({ isOpen, onClose, onSave, camperToEdit, exi
       setInsuranceName(camperToEdit.insuranceName || '');
       setPaymentAmount(camperToEdit.paymentAmount.toString());
       setFiles(camperToEdit.files || []);
+      setProfilePhoto(camperToEdit.profilePhoto || null);
       setRateCode(camperToEdit.rateCode || 'MW-Summer');
       setRateDescription(camperToEdit.rateDescription || 'Medicaid Waiver Summer (7424)');
       setSessionNum(camperToEdit.sessionNum || 'Camp1');
@@ -72,6 +76,7 @@ export default function CamperModal({ isOpen, onClose, onSave, camperToEdit, exi
       setInsuranceName('Medicaid Waiver Summer (7424)');
       setPaymentAmount('8.31');
       setFiles([]);
+      setProfilePhoto(null);
       setRateCode('MW-Summer');
       setRateDescription('Medicaid Waiver Summer (7424)');
       setSessionNum('Camp1');
@@ -143,7 +148,8 @@ export default function CamperModal({ isOpen, onClose, onSave, camperToEdit, exi
       rateDescription,
       sessionNum,
       servicePeriod,
-      files
+      files,
+      profilePhoto
     };
 
     onSave(camperData);
@@ -230,6 +236,43 @@ export default function CamperModal({ isOpen, onClose, onSave, camperToEdit, exi
     setFiles(prev => prev.filter(f => f.name !== fileName));
   };
 
+  // Profile Photo Handlers
+  const handlePhotoDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setProfilePhotoDrag(true);
+    } else if (e.type === 'dragleave') {
+      setProfilePhotoDrag(false);
+    }
+  };
+
+  const handlePhotoDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setProfilePhotoDrag(false);
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      readPhotoAsBase64(file);
+    }
+  };
+
+  const handlePhotoInputChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      readPhotoAsBase64(file);
+    }
+    e.target.value = '';
+  };
+
+  const readPhotoAsBase64 = (file) => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      setProfilePhoto(ev.target.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const formatFileSize = (bytes) => {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -272,6 +315,75 @@ export default function CamperModal({ isOpen, onClose, onSave, camperToEdit, exi
               <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">
                 Datos del Campista
               </h3>
+
+              {/* Profile Photo Dropzone */}
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-slate-600">Foto de Perfil</label>
+                <div
+                  onDragEnter={handlePhotoDrag}
+                  onDragOver={handlePhotoDrag}
+                  onDragLeave={handlePhotoDrag}
+                  onDrop={handlePhotoDrop}
+                  onClick={() => !profilePhoto && photoInputRef.current.click()}
+                  className={`relative flex items-center gap-4 p-3.5 rounded-2xl border-2 border-dashed transition-all duration-150 ${
+                    profilePhotoDrag
+                      ? 'border-camp-green bg-camp-green-light/40'
+                      : profilePhoto
+                      ? 'border-slate-200 bg-slate-50 cursor-default'
+                      : 'border-slate-200 bg-slate-50 hover:border-camp-green/50 hover:bg-camp-green-light/20 cursor-pointer'
+                  }`}
+                >
+                  <input
+                    ref={photoInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoInputChange}
+                    className="hidden"
+                  />
+
+                  {profilePhoto ? (
+                    <>
+                      <img
+                        src={profilePhoto}
+                        alt="Foto de perfil"
+                        className="h-16 w-16 rounded-xl object-cover shrink-0 border border-slate-200 shadow-sm"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-bold text-slate-700">Foto cargada</p>
+                        <p className="text-[10px] text-slate-400 mt-0.5">Haga clic en cambiar para reemplazarla</p>
+                      </div>
+                      <div className="flex flex-col gap-1.5 shrink-0">
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); photoInputRef.current.click(); }}
+                          className="px-2.5 py-1.5 bg-camp-green-light text-camp-green-dark text-[10px] font-bold rounded-lg hover:bg-camp-green-medium/20 cursor-pointer transition-colors"
+                        >
+                          Cambiar
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); setProfilePhoto(null); }}
+                          className="px-2.5 py-1.5 bg-rose-50 text-rose-500 text-[10px] font-bold rounded-lg hover:bg-rose-100 cursor-pointer transition-colors"
+                        >
+                          Quitar
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="h-16 w-16 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-300 shrink-0">
+                        <UserCircle2 className="h-9 w-9" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-slate-600">
+                          <span className="text-camp-green font-bold">Clic</span> o arrastre una imagen
+                        </p>
+                        <p className="text-[10px] text-slate-400 mt-0.5">JPG, PNG o WEBP — máx. 5 MB</p>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
 
               {/* ID / Código único */}
               <div className="space-y-1.5">

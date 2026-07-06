@@ -19,22 +19,59 @@ import {
   Wallet, 
   TrendingUp, 
   FileCheck, 
-  Percent 
+  Percent,
+  ShieldCheck,
+  X
 } from 'lucide-react';
+
+// Rate code catalog
+const RATE_CODES_INFO = [
+  { code: 'MW-Summer', label: 'MW-Summer', desc: 'Medicaid Waiver Summer',     color: '#1E3A5F', bg: '#EBF1F7', text: '#1E3A5F', type: 'Seguro'  },
+  { code: 'MW-INTB',   label: 'MW-INTB',   desc: 'Medicaid Waiver Intensive',  color: '#2E588F', bg: '#dce8f5', text: '#1E3A5F', type: 'Seguro'  },
+  { code: 'NCD-350',   label: 'NCD-350',   desc: 'Nassau County Residents',    color: '#527E26', bg: '#F1F7EC', text: '#375916', type: 'Seguro'  },
+  { code: 'OR',        label: 'OR',         desc: 'Other Residences / Privado', color: '#D97706', bg: '#FEF3C7', text: '#B45309', type: 'Privado' },
+  { code: 'Custom',    label: 'Custom',     desc: 'Tarifa Personalizada',       color: '#64748B', bg: '#F1F5F9', text: '#475569', type: 'Seguro'  },
+];
+
+function getRateInfo(code) {
+  return RATE_CODES_INFO.find(r => r.code === code) ||
+    { code, label: code, color: '#94A3B8', bg: '#F8FAFC', text: '#64748B', type: 'Seguro', desc: code };
+}
 
 export default function Dashboard({ campers }) {
   // Filter states
-  const [paymentFilter, setPaymentFilter] = useState('Todos'); // Todos, Seguro, Privado
+  const [paymentFilter, setPaymentFilter] = useState('Todos');    // Todos, Seguro, Privado
   const [conditionFilter, setConditionFilter] = useState('Todos'); // Todos, Nuevo, Reincorporado
+  const [rateFilter, setRateFilter] = useState('Todos');           // Todos, or any rate code
 
   // Apply filters to data
   const filteredCampers = useMemo(() => {
     return campers.filter(camper => {
-      const matchPayment = paymentFilter === 'Todos' || camper.paymentMethod === paymentFilter;
-      const matchCondition = conditionFilter === 'Todos' || camper.condition === conditionFilter;
-      return matchPayment && matchCondition;
+      const matchPayment   = paymentFilter   === 'Todos' || camper.paymentMethod === paymentFilter;
+      const matchCondition = conditionFilter === 'Todos' || camper.condition     === conditionFilter;
+      const matchRate      = rateFilter      === 'Todos' || camper.rateCode      === rateFilter;
+      return matchPayment && matchCondition && matchRate;
     });
-  }, [campers, paymentFilter, conditionFilter]);
+  }, [campers, paymentFilter, conditionFilter, rateFilter]);
+
+  // Available rate codes present in the data
+  const availableRateCodes = useMemo(() => {
+    return [...new Set(campers.map(c => c.rateCode).filter(Boolean))];
+  }, [campers]);
+
+  // Rate code pie chart data
+  const rateCodePieData = useMemo(() => {
+    const counts = filteredCampers.reduce((acc, camper) => {
+      const code = camper.rateCode || 'Sin código';
+      acc[code] = (acc[code] || 0) + 1;
+      return acc;
+    }, {});
+    return Object.entries(counts)
+      .map(([code, value]) => ({ code, name: code, value }))
+      .sort((a, b) => b.value - a.value);
+  }, [filteredCampers]);
+
+  const hasActiveFilters = paymentFilter !== 'Todos' || conditionFilter !== 'Todos' || rateFilter !== 'Todos';
 
   // KPI Calculations
   const stats = useMemo(() => {
@@ -141,14 +178,24 @@ export default function Dashboard({ campers }) {
       </div>
 
       {/* Interactive Filters Panel */}
-      <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
-        <div className="flex items-center space-x-2 text-slate-700">
-          <Filter className="h-4.5 w-4.5 text-camp-green" />
-          <h2 className="text-sm font-bold">Filtros de Segmentación</h2>
+      <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2 text-slate-700">
+            <Filter className="h-4.5 w-4.5 text-camp-green" />
+            <h2 className="text-sm font-bold">Filtros de Segmentación</h2>
+          </div>
+          {hasActiveFilters && (
+            <button
+              onClick={() => { setPaymentFilter('Todos'); setConditionFilter('Todos'); setRateFilter('Todos'); }}
+              className="flex items-center space-x-1 px-2.5 py-1 text-[10px] font-bold text-slate-500 hover:text-rose-500 border border-slate-200 hover:border-rose-200 rounded-lg cursor-pointer transition-all"
+            >
+              <X className="h-3 w-3" />
+              <span>Limpiar filtros</span>
+            </button>
+          )}
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          
           {/* Payment Method filter */}
           <div className="space-y-2">
             <label className="text-xs font-semibold text-slate-500 block">Método de Pago</label>
@@ -160,7 +207,7 @@ export default function Dashboard({ campers }) {
                   className={`flex-1 py-2 text-xs font-bold rounded-lg cursor-pointer transition-all ${
                     paymentFilter === method 
                       ? 'bg-white text-camp-navy shadow-sm border border-slate-200/50' 
-                      : 'text-slate-555 hover:text-slate-800 hover:bg-white/30'
+                      : 'text-slate-500 hover:text-slate-800 hover:bg-white/30'
                   }`}
                 >
                   {method}
@@ -180,7 +227,7 @@ export default function Dashboard({ campers }) {
                   className={`flex-1 py-2 text-xs font-bold rounded-lg cursor-pointer transition-all ${
                     conditionFilter === cond 
                       ? 'bg-white text-camp-green shadow-sm border border-slate-200/50' 
-                      : 'text-slate-555 hover:text-slate-800 hover:bg-white/30'
+                      : 'text-slate-500 hover:text-slate-800 hover:bg-white/30'
                   }`}
                 >
                   {cond}
@@ -188,8 +235,56 @@ export default function Dashboard({ campers }) {
               ))}
             </div>
           </div>
-
         </div>
+
+        {/* Rate Code pills filter */}
+        {availableRateCodes.length > 0 && (
+          <div className="space-y-2">
+            <label className="text-xs font-semibold text-slate-500 flex items-center space-x-1.5">
+              <ShieldCheck className="h-3.5 w-3.5 text-camp-green" />
+              <span>Filtrar por Tipo de Seguro / Rate Code</span>
+            </label>
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setRateFilter('Todos')}
+                className={`px-3 py-1.5 text-xs font-bold rounded-xl cursor-pointer border transition-all ${
+                  rateFilter === 'Todos'
+                    ? 'bg-slate-800 text-white border-slate-800 shadow-sm'
+                    : 'bg-slate-50 text-slate-500 border-slate-200 hover:border-slate-400 hover:text-slate-700'
+                }`}
+              >
+                Todos
+              </button>
+              {availableRateCodes.map((code) => {
+                const info = getRateInfo(code);
+                const isActive = rateFilter === code;
+                const count = campers.filter(c => c.rateCode === code).length;
+                return (
+                  <button
+                    key={code}
+                    onClick={() => setRateFilter(isActive ? 'Todos' : code)}
+                    style={isActive ? { backgroundColor: info.color, borderColor: info.color, color: '#fff' } : {}}
+                    className={`flex items-center space-x-1.5 px-3 py-1.5 text-xs font-bold rounded-xl cursor-pointer border transition-all ${
+                      isActive ? 'shadow-sm' : 'bg-slate-50 border-slate-200 hover:border-slate-400'
+                    }`}
+                  >
+                    <span style={!isActive ? { color: info.color } : {}}>●</span>
+                    <span style={!isActive ? { color: info.text } : {}}>{code}</span>
+                    <span className={`ml-0.5 px-1.5 py-0.5 rounded-md text-[9px] font-extrabold ${
+                      isActive ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-500'
+                    }`}>
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-[10px] text-slate-400 flex items-center space-x-1 pt-0.5">
+              <span className="inline-block h-2 w-2 rounded-full bg-camp-amber shrink-0"></span>
+              <span><strong className="text-slate-500">OR</strong> es el único código Privado (Other Residences). El resto son coberturas de Seguro / Waiver.</span>
+            </p>
+          </div>
+        )}
       </div>
 
       {/* KPI Cards Grid */}
@@ -342,7 +437,80 @@ export default function Dashboard({ campers }) {
             </div>
           </div>
 
-          {/* Chart 2: Relación Niños Nuevos vs Reincorporados */}
+          {/* Chart 2 (NEW): Rate Code / Tipo de Seguro — PIE */}
+          <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between min-h-[420px]">
+            <div>
+              <h3 className="text-sm font-bold text-slate-800">Distribución por Rate Code / Tipo de Seguro</h3>
+              <p className="text-[10px] text-slate-400">Desglose de campistas por código de tarifa (MW-Summer, MW-INTB, NCD-350, OR…)</p>
+            </div>
+
+            <div className="h-56 my-4 flex justify-center items-center">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={rateCodePieData}
+                    cx="50%" cy="50%"
+                    innerRadius={50} outerRadius={80}
+                    paddingAngle={4} dataKey="value"
+                  >
+                    {rateCodePieData.map((entry) => {
+                      const info = getRateInfo(entry.code);
+                      return <Cell key={entry.code} fill={info.color} />;
+                    })}
+                  </Pie>
+                  <Tooltip
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        const info = getRateInfo(payload[0].payload.code);
+                        return (
+                          <div className="bg-slate-900 text-white p-3 rounded-xl border border-slate-700 shadow-xl text-xs">
+                            <p className="font-bold">{payload[0].name}</p>
+                            <p className="text-[10px] text-slate-400 mt-0.5">{info.desc}</p>
+                            <p className="mt-1"><span className="text-camp-amber-light font-semibold">Tipo: </span>{info.type}</p>
+                            <p><span className="text-emerald-400 font-semibold">Campistas: </span>{payload[0].value}</p>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <Legend
+                    verticalAlign="bottom" height={36} iconType="circle"
+                    formatter={(value) => <span className="text-xs font-bold text-slate-600">{value}</span>}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Rate code legend rows */}
+            <div className="space-y-1.5">
+              {rateCodePieData.map((entry) => {
+                const info = getRateInfo(entry.code);
+                const pct = stats.totalCount > 0 ? ((entry.value / stats.totalCount) * 100).toFixed(1) : '0.0';
+                return (
+                  <div
+                    key={entry.code}
+                    className="flex items-center justify-between px-3 py-2 rounded-xl border"
+                    style={{ backgroundColor: info.bg, borderColor: info.color + '40' }}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: info.color }}></span>
+                      <div>
+                        <p className="text-xs font-bold" style={{ color: info.text }}>{info.label}</p>
+                        <p className="text-[10px] text-slate-400">{info.desc}</p>
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0 ml-3">
+                      <p className="text-sm font-extrabold" style={{ color: info.color }}>{entry.value} campistas</p>
+                      <p className="text-[10px] text-slate-400">{pct}%</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Chart 3: Relación Niños Nuevos vs Reincorporados */}
           <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between min-h-[420px]">
             <div>
               <h3 className="text-sm font-bold text-slate-800">Relación de Campistas Nuevos vs Reincorporados</h3>
