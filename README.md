@@ -49,25 +49,9 @@ src/
 
 ---
 
-## Instalación y ejecución local
-
-Requisitos previos: Node.js 18 o superior.
-
-```bash
-# Instalar dependencias
-npm install
-
-# Iniciar servidor de desarrollo
-npm run dev
-
-# Generar build de producción
-npm run build
-```
-
----
-
 ## Contacto
 
 - Instagram: [@phoenix_petals24](https://www.instagram.com/phoenix_petals24?igsh=MWVmeXRoNGF0N2dreg==)
 - WhatsApp: +351 935 882 405
 - Ubicación: Madeira, Portugal
+
