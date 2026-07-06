@@ -1,4 +1,4 @@
-# Bloon Paradise
+# Bloom Paradise
 
 Sitio web de presentación y ventas para **Bloon Paradise**, una tienda de arreglos florales y regalos artesanales ubicada en Madeira, Portugal. La página actúa como catálogo visual interactivo y canal directo de contacto con clientes a través de WhatsApp.
 
@@ -6,7 +6,7 @@ Sitio web de presentación y ventas para **Bloon Paradise**, una tienda de arreg
 
 ## Propósito
 
-Bloon Paradise ofrece arreglos elaborados con flores frescas, cajas regalo, bouquets y decoraciones para todo tipo de ocasión especial. El objetivo del sitio es presentar el catálogo de productos de forma atractiva, transmitir la identidad de la marca y reducir la fricción entre el cliente y el pedido, redirigiendo directamente a una conversación de WhatsApp con un mensaje preformateado.
+Bloom Paradise ofrece arreglos elaborados con flores frescas, cajas regalo, bouquets y decoraciones para todo tipo de ocasión especial. El objetivo del sitio es presentar el catálogo de productos de forma atractiva, transmitir la identidad de la marca y reducir la fricción entre el cliente y el pedido, redirigiendo directamente a una conversación de WhatsApp con un mensaje preformateado.
 
 ---
 
