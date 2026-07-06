@@ -37,7 +37,7 @@ function Navbar({ whatsappHref }) {
           href="#inicio"
           className="font-display text-2xl text-bp-text-dark"
         >
-          Bloon Paradise
+          Bloom Paradise
         </a>
 
         <ul className="hidden md:flex items-center gap-8 font-body text-bp-text-dark">

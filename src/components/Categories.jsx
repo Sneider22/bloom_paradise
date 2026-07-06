@@ -157,7 +157,7 @@ function Categories({ whatsappHref }) {
         <span className="block w-28 h-[3px] bg-bp-yellow-gold mx-auto mt-5 rounded-full" />
         <p
           className="font-body text-sm md:text-base mt-4"
-          style={{ color: '#3D3D2E', fontWeight: 500, opacity: 0.7 }}
+          style={{ color: '#3D3D2E', fontWeight: 600, opacity: 0.85 }}
         >
           Un arreglo para cada momento especial
         </p>
