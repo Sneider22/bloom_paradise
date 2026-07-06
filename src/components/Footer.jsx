@@ -27,17 +27,17 @@ function Footer({ whatsappHref }) {
 
           {/* Marca */}
           <div className="text-center md:text-left">
-            <p className="font-display text-lg font-semibold text-bp-cream">Bloon Paradise</p>
+            <p className="font-display text-lg font-semibold text-bp-cream">Bloom Paradise</p>
             <p className="font-body text-xs text-bp-cream/55 mt-0.5">Cada detalle, con amor · Portugal · Madeira</p>
           </div>
 
           {/* Redes sociales */}
           <div className="flex items-center gap-3">
             <a
-              href="https://www.instagram.com/bloomparadise_26?utm_source=qr"
+              href="https://www.instagram.com/phoenix_petals24?igsh=MWVmeXRoNGF0N2dreg=="
               target="_blank"
               rel="noreferrer"
-              aria-label="Instagram de Bloon Paradise"
+              aria-label="Instagram de Bloom Paradise"
               className="w-9 h-9 rounded-full border border-bp-cream/20 flex items-center justify-center text-bp-cream hover:text-bp-yellow-main hover:border-bp-yellow-main transition-colors"
             >
               <IconInstagram />
@@ -46,7 +46,7 @@ function Footer({ whatsappHref }) {
               href={whatsappHref}
               target="_blank"
               rel="noreferrer"
-              aria-label="WhatsApp de Bloon Paradise"
+              aria-label="WhatsApp de Bloom Paradise"
               className="w-9 h-9 rounded-full border border-bp-cream/20 flex items-center justify-center text-bp-cream hover:text-bp-yellow-main hover:border-bp-yellow-main transition-colors"
             >
               <IconWhatsApp />
@@ -67,7 +67,7 @@ function Footer({ whatsappHref }) {
 
         {/* Copyright */}
         <p className="font-body text-[11px] text-bp-cream/40 text-center mt-4">
-          © 2025 Bloon Paradise. Todos los derechos reservados.
+          © 2026 Bloom Paradise. Todos los derechos reservados.
         </p>
 
       </div>

@@ -151,7 +151,7 @@ function CollageSection() {
           Nuestros arreglos
         </h2>
         <span className="block w-20 h-1 bg-bp-yellow-main mx-auto mt-4 rounded-full" />
-        <p className="font-body text-bp-cream/50 text-xs mt-3 tracking-wide uppercase">
+        <p className="font-body font-semibold text-bp-cream/75 text-xs mt-3 tracking-wide uppercase">
           Explora · Toca para pedir por WhatsApp
         </p>
       </div>

@@ -1,86 +1,44 @@
 @import "tailwindcss";
 
 @theme {
-  --color-camp-green-light: #F1F7EC;
-  --color-camp-green-medium: #78A54A;
-  --color-camp-green: #527E26;
-  --color-camp-green-dark: #375916;
-  
-  --color-camp-navy: #1E3A5F;
-  --color-camp-navy-dark: #12243C;
-  --color-camp-navy-light: #2E588F;
-  --color-camp-navy-muted: #EBF1F7;
+  --color-bp-yellow-light: #F9F5C8;
+  --color-bp-yellow-main: #F0E84A;
+  --color-bp-yellow-gold: #E8D44D;
+  --color-bp-green-mint: #D4F0C0;
+  --color-bp-green-pastel: #A8D98A;
+  --color-bp-green-accent: #6BBF59;
+  --color-bp-cream: #FAFAF7;
+  --color-bp-text-dark: #3D3D2E;
+  --color-bp-pink-petal: #F7D6E0;
 
-  --color-camp-amber: #D97706;
-  --color-camp-amber-light: #FEF3C7;
-  --color-camp-amber-dark: #B45309;
-
-  --color-camp-cream: #FAF9F5;
-  --color-camp-sand: #F0EFEA;
-  
-  --font-display: "Outfit", sans-serif;
-  --font-sans: "Plus Jakarta Sans", sans-serif;
+  --font-display: "Lora", serif;
+  --font-body: "Poppins", sans-serif;
 }
 
 :root {
-  --camp-green: #527E26;
-  --camp-navy: #1E3A5F;
-  --camp-cream: #FAF9F5;
+  --bp-yellow-light: #F9F5C8;
+  --bp-yellow-main: #F0E84A;
+  --bp-yellow-gold: #E8D44D;
+  --bp-green-mint: #D4F0C0;
+  --bp-green-pastel: #A8D98A;
+  --bp-green-accent: #6BBF59;
+  --bp-cream: #FAFAF7;
+  --bp-text-dark: #3D3D2E;
+  --bp-pink-petal: #F7D6E0;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  background-color: var(--color-camp-cream);
-  color: #1E293B;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  background-color: var(--bp-cream);
+  color: var(--bp-text-dark);
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
 }
 
-/* Custom scrollbars for a cleaner administrative look */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #94A3B8;
-}
-
-/* Smooth glass effect helper */
-.glass-panel {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-}
-
-.glass-dark {
-  background: rgba(18, 36, 60, 0.95);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Input custom styles */
-input:focus, select:focus, textarea:focus {
-  outline: none;
-  border-color: var(--color-camp-green);
-  box-shadow: 0 0 0 3px rgba(82, 126, 38, 0.15);
-}
-
-/* Custom table row styling */
-tr {
-  transition: all 0.2s ease;
-}
-
-/* Button micro-animations */
-button {
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+html {
+  scroll-behavior: smooth;
 }
